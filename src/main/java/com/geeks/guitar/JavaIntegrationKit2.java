@@ -66,6 +66,7 @@ public class JavaIntegrationKit2 {
     }
     
     public String hashCal(String type,String str){
+    	// http://passwordsgenerator.net/sha512-hash-generator/
 		byte[] hashseq=str.getBytes();
 		StringBuffer hexString = new StringBuffer();
 		try{
@@ -86,16 +87,46 @@ public class JavaIntegrationKit2 {
 		return hexString.toString();
 	}
 
+    private String getKey(String env){
+
+    	if(env.equals("secure")){
+    		return "gu3gUwmf";
+    	}else{
+    		return "gtKFFx";//test
+    	}
+    }
+    
+    private String getSalt(String env){
+    	if(env.equals("secure")){
+
+    		return "ZcoOKlVupo";
+    	}else{
+    		return "eCwWELxi";//test
+    		
+    	}
+    }
+    
+    private String getBaseURL(String env){
+    	if(env.equals("secure")){
+    		return "https://secure.payu.in";
+    		
+    	}else{
+    		return "https://test.payu.in";//test
+    		
+    	}
+    }
+    
     protected Map<String, String> hashCalMethod(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //response.setContentType("text/html;charset=UTF-8");
-        String salt = "eCwWELxi";// test salt eCwWELxi, Rui8Hy58
+        
         String action1 = "";
-        String base_url = "https://test.payu.in";
-        // base_url = "https://secure.payu.in";
+        String env = (request.getParameter("env")== null || empty(request.getParameter("env")) ) ? "test" : request.getParameter("env");
+        String base_url = getBaseURL(env);
+        
         error = 0;
         String hashString = "";
         Enumeration paramNames = request.getParameterNames();
+        
         Map<String, String> params = new HashMap<String, String>();
         Map<String, String> urlParams = new HashMap<String, String>();
         while (paramNames.hasMoreElements()) {
@@ -103,22 +134,21 @@ public class JavaIntegrationKit2 {
             String paramValue = request.getParameter(paramName);
             params.put(paramName, paramValue);
         }
+        
         String txnid = "";
         if (empty(params.get("txnid"))) {
             Random rand = new Random();
             String rndm = Integer.toString(rand.nextInt()) + (System.currentTimeMillis() / 1000L);
             txnid = rndm;
             params.remove("txnid");
-            params.put("txnid", txnid);
             txnid = hashCal("SHA-256", rndm).substring(0, 20);
+            params.put("txnid", txnid);
         } else {
             txnid = params.get("txnid");
         }
-        
-        //params.put("key","gu3gUwmf");salt="ZcoOKlVupo";base_url = "https://secure.payu.in";//live key,salt,url
-        
-        
-        //String txn = "abcd";
+        if (empty(params.get("key"))) {
+            params.put("key", getKey(env));
+        }
         String hash = "";
         String otherPostParamSeq = "phone|surl|furl|lastname|curl|address1|address2|city|state|country|zipcode|pg";
         String hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10";
@@ -129,16 +159,16 @@ public class JavaIntegrationKit2 {
                 
                 String[] hashVarSeq = hashSequence.split("\\|");
                 for (String part : hashVarSeq) {
-                    /*if (part.equals("txnid")) {
-                        hashString = hashString + txnid;
-                        urlParams.put("txnid", txnid);
-                    } else {*/
-                        hashString = (empty(params.get(part))) ? hashString.concat("") : hashString.concat(params.get(part).trim());
-                        urlParams.put(part, empty(params.get(part)) ? "" : params.get(part).trim());
-                    //}
+                    
+                	hashString = (empty(params.get(part))) ? hashString.concat("") : hashString.concat(params.get(part).trim());
+                    urlParams.put(part, empty(params.get(part)) ? "" : params.get(part).trim());
                     hashString = hashString.concat("|");
+                    
                 }
-                hashString = hashString.concat(salt);
+                if (env.equals("secure")) {
+                	urlParams.put("service_provider", params.get("service_provider"));
+                }
+                hashString = hashString.concat(getSalt(env));
                 System.out.println(hashString);
                 urlParams.put("hashString1", hashString);
                 hash = hashCal("SHA-512", hashString);

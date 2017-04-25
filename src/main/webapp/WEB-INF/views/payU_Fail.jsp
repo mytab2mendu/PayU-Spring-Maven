@@ -8,7 +8,7 @@
 	<div>
 		<h2>Payment Details When Failed</h2>
 	</div>
-
+<a href='./payU_Home'>Retry Here</a>
 	<div>
 		
 		

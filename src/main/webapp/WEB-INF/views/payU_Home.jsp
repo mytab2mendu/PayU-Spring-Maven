@@ -13,10 +13,11 @@
 <div>
 <table>
 	<form name="postForm" action="payU_Process" method="POST" >
-	<input type="hidden" name="key" value="gtKFFx" />gtKFFx, 7wjvvX
+	<input type="hidden" name="key" value="" /><!--   -->
 	<input type="hidden" name="service_provider" value="payu_paisa" />
-	
-	<tr><td>txnid</td><td><input type="hidden" name="txnid" value="" /></td></tr>
+	<tr><td>Environment</td><td><input type="radio" name="env" value="secure" />Live
+	 &nbsp; &nbsp;<input type="radio" name="env" value="test" checked="checked" />DEV</td></tr>
+	<tr><td>txnid</td><td>XXXXXXXXX<input type="hidden" name="txnid" value="" /></td></tr>
 	<tr><td>amount</td><td><input type="text" name="amount" value="10.00" /></td></tr>
 	<tr><td>firstname</td><td><input type="text" name="firstname" value="Shiva" /></td></tr>
 	<tr><td>email</td><td><input type="text" name="email" value="gani247@gmail.com" /></td></tr>

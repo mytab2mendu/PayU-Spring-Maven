@@ -8,7 +8,7 @@
 	<div>
 		<h2>Payment Details When Success</h2>
 	</div>
-
+Goto PayU Money <a href='./payU_Home'>Home</a>
 	<div>
 		
 		
